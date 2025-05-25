@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Web Scraper</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>Advanced Web Scraper</h1>
+    </header>
+    <main>
+        <section id="scraper-controls">
+            <h2>Scraper Controls</h2>
+            <button id="start-scraper">Start Scraping</button>
+            <button id="stop-scraper">Stop Scraping</button>
+        </section>
+        <section id="scraper-status">
+            <h2>Scraper Status</h2>
+            <div id="status-message">Idle</div>
+        </section>
+        <section id="scraped-data">
+            <h2>Scraped Data</h2>
+            <table id="data-table">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>URL</th>
+                        <th>Date Scraped</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Scraped data will be populated here -->
+                </tbody>
+            </table>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2023 Advanced Web Scraper</p>
+    </footer>
+    <script src="script.js"></script>
+</body>
+</html>

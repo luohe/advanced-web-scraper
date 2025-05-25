@@ -1,0 +1,41 @@
+{
+  "name": "advanced-web-scraper",
+  "version": "1.0.0",
+  "description": "A comprehensive web scraping framework using Crawlee, Puppeteer, and Cheerio.",
+  "main": "src/app.ts",
+  "scripts": {
+    "start": "ts-node src/app.ts",
+    "test": "jest",
+    "build": "tsc",
+    "start-local": "bash scripts/start-local.sh",
+    "deploy": "bash scripts/deploy-pm2.sh"
+  },
+  "dependencies": {
+    "@types/express": "^5.0.2",
+    "bull": "^4.16.5",
+    "cheerio": "^1.0.0-rc.10",
+    "crawlee": "^3.5.8",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "playwright": "^1.52.0",
+    "reflect-metadata": "^0.2.2",
+    "sqlite": "^5.1.1",
+    "sqlite3": "^5.0.0",
+    "tsyringe": "^4.8.0",
+    "winston": "^3.17.0"
+  },
+  "devDependencies": {
+    "@types/jest": "^27.0.0",
+    "@types/node": "^16.0.0",
+    "jest": "^27.0.0",
+    "ts-node": "^10.0.0",
+    "typescript": "^4.0.0"
+  },
+  "jest": {
+    "testEnvironment": "node"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "license": "MIT"
+}
