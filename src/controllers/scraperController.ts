@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { inject, injectable } from 'tsyringe';
-import { ScraperService } from '../services/scraperService';
+import { ScraperService } from '../services/playwrightCrawlerService';
 
 @injectable()
 export class ScraperController {

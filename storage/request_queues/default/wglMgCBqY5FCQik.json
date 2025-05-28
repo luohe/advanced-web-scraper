@@ -1,9 +1,0 @@
-{
-	"id": "wglMgCBqY5FCQik",
-	"json": "{\"id\":\"wglMgCBqY5FCQik\",\"url\":\"http://wenku.baidu.com/search?lm=0&amp\",\"uniqueKey\":\"http://wenku.baidu.com/search?amp=&lm=0\",\"method\":\"GET\",\"noRetry\":false,\"retryCount\":0,\"errorMessages\":[],\"headers\":{},\"userData\":{}}",
-	"method": "GET",
-	"orderNo": 1748421401551,
-	"retryCount": 0,
-	"uniqueKey": "http://wenku.baidu.com/search?amp=&lm=0",
-	"url": "http://wenku.baidu.com/search?lm=0&amp"
-}

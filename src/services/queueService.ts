@@ -1,6 +1,6 @@
 import Bull, { Queue, Job } from 'bull';
 import { injectable } from 'tsyringe';
-import { ScraperService } from './scraperService';
+import { ScraperService } from './playwrightCrawlerService';
 
 @injectable()
 export class QueueService {
