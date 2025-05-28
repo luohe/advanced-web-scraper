@@ -1,57 +1,119 @@
-import { PlaywrightCrawler, Dataset } from 'crawlee'; // 替换 Puppeteer 为 Playwright
+import { PlaywrightCrawler, Dataset, chromium } from 'crawlee'; // 替换 Puppeteer 为 Playwright
 import { injectable } from 'tsyringe';
 import { ProxyService } from './proxyService';
 import logger from '../utils/logger';
-import { PLAYWRIGHT_CRAWLER_CONFIG } from '../config/crawlee'; // 替换为 Playwright 的配置
+import { PLAYWRIGHT_CRAWLER_CONFIG, CRAWLEE_MAX_INSTANCES } from '../config/crawlee'; // 替换为 Playwright 的配置
 import { extractDataByUrl } from '../extracts/index';
+
 
 @injectable()
 export class ScraperService {
-    private crawler: PlaywrightCrawler;
+    private browser: any; // 用于存储浏览器实例
+    // 创建一个示例列表，用于存储爬取的任务
+    private crawlers = new Map<string, PlaywrightCrawler>(); // 使用 Map 存储任务 ID 和对应的爬虫实例
     private proxyService: ProxyService;
-    private taskStatus: Map<string, string>; // 用于存储任务状态
 
     constructor() {
         this.proxyService = new ProxyService();
-        this.taskStatus = new Map(); // 初始化任务状态存储
+    }
 
-        // 初始化 PlaywrightCrawler
-        this.crawler = new PlaywrightCrawler({
-            ...PLAYWRIGHT_CRAWLER_CONFIG,
-            // 代理配置
-            proxyConfiguration: this.proxyService.configurePuppeteerProxy(),
+    // 生成一个chromium浏览器实例
+    private async createBrowserInstance(): Promise<void> {
+        try {
+            this.browser = await chromium.launch({ headless: true }); // 启动 Chromium 浏览器
+            logger.info('Chromium browser instance created successfully');
+        } catch (error: any) {
+            logger.error(`Error creating Chromium browser instance: ${error.message}`);
+            throw error; // 抛出错误以便调用者处理
+        }
+    }
 
-            // 请求拦截器
-            requestHandler: async ({ page, request }) => {
-                const taskId = request.url;
-                this.taskStatus.set(taskId, 'in-progress'); // 设置任务状态为进行中
+    // 关闭chromium浏览器实例
+    private async closeBrowserInstance(browser: any): Promise<void> {
+        try {
+            if (browser) {
+                await browser.close(); // 关闭浏览器实例
+                logger.info('Chromium browser instance closed successfully');
+            } else {
+                logger.warn('No browser instance to close');
+            }
+        } catch (error: any) {
+            logger.error(`Error closing Chromium browser instance: ${error.message}`);
+            throw error; // 抛出错误以便调用者处理
+        }
+    }
 
-                try {
-                    logger.info(`Scraping URL: ${request.url}`);
-                    const data = await extractDataByUrl(page);
-                    await this.storeData(taskId, data); // 存储数据到 Dataset
-                    this.taskStatus.set(taskId, 'completed'); // 设置任务状态为已完成
-                } catch (error: any) {
-                    logger.error(`Error scraping ${request.url}: ${error.message}`);
-                    this.taskStatus.set(taskId, 'failed'); // 设置任务状态为失败
-                }
-            },
-        });
+    // 使用共享的浏览器实例创建一个爬虫实例
+    // 为后续多网络、多设备、多地域等差异化配置留入口
+    private async createCrawlerInstance(id: string): Promise<void> {
+        try {
+            if (!this.browser) {
+                await this.createBrowserInstance(); // 如果没有浏览器实例，则创建一个
+            }
+
+            // 爬虫实例超出上限，禁止创建新的爬虫实例
+            if (this.crawlers.size >= CRAWLEE_MAX_INSTANCES) {
+                logger.error(`Maximum crawler instances limit reached: ${CRAWLEE_MAX_INSTANCES}`);
+                throw new Error(`Maximum crawler instances limit reached: ${CRAWLEE_MAX_INSTANCES}`);
+            }
+
+            // 爬虫实例已存在，直接返回
+            if (this.crawlers.has(id)) {
+                logger.info(`Crawler instance for ID ${id} already exists`);
+                return;
+            }
+
+            const crawler = new PlaywrightCrawler({
+                ...PLAYWRIGHT_CRAWLER_CONFIG,
+                launchContext: { launcher: this.browser }, // 使用共享的浏览器实例
+                requestHandler: async ({ page, request }) => {
+                    const taskId = request.url;
+                    try {
+                        logger.info(`Scraping URL: ${request.url}`);
+                        const data = await extractDataByUrl(page);
+                        await this.storeData(taskId, data); // 存储数据到 Dataset
+                    } catch (error: any) {
+                        logger.error(`Error scraping ${request.url}: ${error.message}`);
+                    }
+                },
+            });
+
+            this.crawlers.set(id, crawler); // 将爬虫实例存储到 Map 中
+            logger.info(`Crawler instance for ID ${id} created successfully`);
+        } catch (error: any) {
+            logger.error(`Error creating crawler instance: ${error.message}`);
+            throw error; // 抛出错误以便调用者处理
+        }
     }
 
     // 单独爬取一个 URL 的方法
     public async scrape(url: string): Promise<void> {
-        const taskId = url; // 使用 URL 作为任务 ID
-        this.taskStatus.set(taskId, 'in-progress'); // 设置任务状态为进行中
+        if (!url) {
+            throw new Error('URL is required for scraping');
+        }
+        const taskId = new URL(url).hostname; // 使用 URL 的主机名作为任务 ID
+        await this.createCrawlerInstance(taskId); // 创建或获取爬虫实例
+        const crawler = this.crawlers.get(taskId); // 获取对应的爬虫实例
+        if (!crawler) {
+            logger.error(`Crawler instance for task ID ${taskId} not found`);
+            throw new Error(`Crawler instance for task ID ${taskId} not found`);
+        }
 
         try {
+            // 开始爬取任务
             logger.info(`Starting scrape for URL: ${url}`);
-            await this.crawler.addRequests([{ requestsFromUrl: url }]); // 将 URL 添加到爬取队列
-            await this.crawler.run(); // 启动爬取任务
-            this.taskStatus.set(taskId, 'completed'); // 设置任务状态为已完成
+            await crawler.addRequests([{ url }]); // 将 URL 添加到爬取队列
+            await crawler.run(); // 启动爬取任务
+            logger.info(`Scraping completed for URL: ${url}`);
         } catch (error: any) {
             logger.error(`Error scraping ${url}: ${error.message}`);
-            this.taskStatus.set(taskId, 'failed'); // 设置任务状态为失败
+        } finally {
+            this.crawlers.delete(taskId); // 从 Map 中删除爬虫实例
+            if (this.crawlers.size === 0) {
+                await this.closeBrowserInstance(this.browser); // 如果没有爬虫实例，关闭浏览器
+                this.browser = null; // 清空浏览器实例
+            }
+            logger.info(`Crawler instance for ID ${taskId} deleted`);
         }
     }
 
@@ -67,58 +129,8 @@ export class ScraperService {
     }
 
     // 获取特定任务的状态
-    public getTaskStatus(taskId: string): string {
-        return this.taskStatus.get(taskId) || 'not-found'; // 返回任务状态或未找到
-    }
 
     // 停止特定任务的方法
-    public async stop(taskId: string): Promise<void> {
-        try {
-            // 检查任务是否存在
-            const status = this.taskStatus.get(taskId);
-            if (!status) {
-                throw new Error(`Task with ID ${taskId} not found.`);
-            }
-
-            // 如果任务已经完成或失败，则无法停止
-            if (status === 'completed' || status === 'failed') {
-                throw new Error(`Task with ID ${taskId} is already ${status} and cannot be stopped.`);
-            }
-
-            // 设置任务状态为 "stopped"
-            this.taskStatus.set(taskId, 'stopped');
-            logger.info(`Task with ID ${taskId} has been stopped.`);
-        } catch (error: any) {
-            logger.error(`Error stopping task ${taskId}: ${error.message}`);
-            throw error; // 将错误抛出以便调用方处理
-        }
-    }
 
     // 获取爬取的数据
-    public async getScrapedData(taskId: string): Promise<any> {
-        try {
-            // 检查任务是否存在
-            const status = this.taskStatus.get(taskId);
-            if (!status) {
-                throw new Error(`Task with ID ${taskId} not found.`);
-            }
-
-            // 如果任务未完成，则无法获取数据
-            if (status !== 'completed') {
-                throw new Error(`Task with ID ${taskId} is not completed. Current status: ${status}`);
-            }
-
-            // 从 Dataset 中获取数据
-            const data = await Dataset.getData();
-            const taskData = data.items.find((item: any) => item.taskId === taskId);
-            if (!taskData) {
-                throw new Error(`No data found for Task ID ${taskId}`);
-            }
-
-            return taskData;
-        } catch (error: any) {
-            logger.error(`Error retrieving data for Task ID ${taskId}: ${error.message}`);
-            throw error; // 将错误抛出以便调用方处理
-        }
-    }
 }

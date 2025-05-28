@@ -12,12 +12,6 @@ export interface ScrapedData {
     [key: string]: any; // Key-value pairs of scraped data
 }
 
-// Define the interface for the queue service
-export interface QueueService {
-    addTask(task: ScrapingTask): void; // Method to add a task to the queue
-    processTasks(): Promise<void>; // Method to process tasks in the queue
-}
-
 // Define the interface for the proxy service
 export interface ProxyService {
     getProxy(): string; // Method to get a proxy for requests

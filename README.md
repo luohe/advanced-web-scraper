@@ -18,17 +18,10 @@ advanced-web-scraper
 ├── src
 │   ├── app.ts
 │   ├── config
-│   │   ├── database.ts
-│   │   ├── puppeteer.ts
-│   │   └── crawlee.ts
 │   ├── controllers
-│   │   ├── scraperController.ts
-│   │   └── apiController.ts
 │   ├── routes
-│   │   └── index.ts
 │   ├── services
 │   │   ├── scraperService.ts
-│   │   ├── queueService.ts
 │   │   └── proxyService.ts
 │   ├── utils
 │   │   ├── logger.ts
@@ -42,8 +35,6 @@ advanced-web-scraper
 │       └── sqlite.db
 ├── tests
 │   ├── scraperService.test.ts
-│   ├── apiController.test.ts
-│   └── queueService.test.ts
 ├── public
 │   └── index.html
 ├── scripts

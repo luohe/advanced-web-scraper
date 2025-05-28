@@ -1,3 +1,5 @@
+// 爬虫实例的上限
+export const CRAWLEE_MAX_INSTANCES = 5;
 
 export const PLAYWRIGHT_CRAWLER_CONFIG = {
     minConcurrency: 1, // 最小并发页面数
