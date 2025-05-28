@@ -11,8 +11,8 @@ export class ScraperController {
     // Start a new scraping task
     public async startScraping(req: Request, res: Response): Promise<void> {
         try {
-            const { url } = req.params; // Get the URL from the request body
-            this.scraperService.scrape(url); // Call the scrape method from ScraperService
+            const { url } = req.query; // Get the URL from the request body
+            this.scraperService.scrape(url as string); // Call the scrape method from ScraperService
             res.status(200).json({ success: true }); // Respond with success and scraped data
         } catch (error: unknown) {
             const err = error as Error; // Cast error to Error type

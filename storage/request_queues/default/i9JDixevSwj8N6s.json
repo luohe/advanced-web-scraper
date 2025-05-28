@@ -1,0 +1,9 @@
+{
+	"id": "i9JDixevSwj8N6s",
+	"json": "{\"id\":\"i9JDixevSwj8N6s\",\"url\":\"http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=11000002000001\",\"uniqueKey\":\"http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=11000002000001\",\"method\":\"GET\",\"noRetry\":false,\"retryCount\":0,\"errorMessages\":[],\"headers\":{},\"userData\":{}}",
+	"method": "GET",
+	"orderNo": 1748421401548,
+	"retryCount": 0,
+	"uniqueKey": "http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=11000002000001",
+	"url": "http://www.beian.gov.cn/portal/registerSystemInfo?recordcode=11000002000001"
+}

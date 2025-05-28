@@ -13,7 +13,6 @@ async function startServer() {
     try {
         // 初始化数据库
         await initializeDatabase();
-        debugger
         // 中间件
         app.use(express.json());
         app.use(dbMiddleware); // 注入数据库实例

@@ -1,0 +1,9 @@
+{
+	"id": "zG0i8MEDIsFDBWf",
+	"json": "{\"id\":\"zG0i8MEDIsFDBWf\",\"url\":\"http://hi.baidu.com/\",\"uniqueKey\":\"http://hi.baidu.com\",\"method\":\"GET\",\"noRetry\":false,\"retryCount\":0,\"errorMessages\":[],\"headers\":{},\"userData\":{}}",
+	"method": "GET",
+	"orderNo": 1748421401553,
+	"retryCount": 0,
+	"uniqueKey": "http://hi.baidu.com",
+	"url": "http://hi.baidu.com/"
+}

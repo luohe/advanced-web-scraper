@@ -1,5 +1,7 @@
 // @ts-ignore optional peer dependency or compatibility with es2022
 import type { Page } from 'playwright';
+import logger from '../utils/logger';
+import exampleExtract from './example';
 
 // 定义提取规则的接口
 interface ExtractRule {
@@ -11,27 +13,21 @@ interface ExtractRule {
 const extractRules: ExtractRule[] = [
     {
         pattern: /example\.com/, // 匹配 example.com 的 URL
+        extract: exampleExtract,
+    },
+    {
+        pattern: /https:\/\/dict\.cn\/search\?q=([^&]+)/, // 匹配 example.org 的 URL
         extract: async (page: Page) => {
+            logger.info(`word scraper from ${page.url()}`);
             return await page.evaluate(() => {
+                logger.info(`获取${document.title} 的数据成功，开始解析！！！`);
                 return {
                     title: document.title,
                     description: document.querySelector('meta[name="description"]')?.getAttribute('content') || '',
                 };
             });
         },
-    },
-    {
-        pattern: /another-example\.com/, // 匹配 another-example.com 的 URL
-        extract: async (page: Page) => {
-            return await page.evaluate(() => {
-                return {
-                    heading: document.querySelector('h1')?.textContent || '',
-                    links: Array.from(document.querySelectorAll('a')).map((a) => a.href),
-                };
-            });
-        },
-    },
-    // 可以添加更多规则
+    }
 ];
 
 // 根据 URL 匹配提取规则并提取数据

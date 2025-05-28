@@ -1,0 +1,9 @@
+{
+	"id": "aCOgYi8pVLxJBVD",
+	"json": "{\"id\":\"aCOgYi8pVLxJBVD\",\"url\":\"http://map.baidu.com\",\"uniqueKey\":\"http://map.baidu.com\",\"method\":\"GET\",\"noRetry\":false,\"retryCount\":0,\"errorMessages\":[],\"headers\":{},\"userData\":{}}",
+	"method": "GET",
+	"orderNo": 1748421401530,
+	"retryCount": 0,
+	"uniqueKey": "http://map.baidu.com",
+	"url": "http://map.baidu.com"
+}

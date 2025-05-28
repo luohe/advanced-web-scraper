@@ -3,7 +3,7 @@ import { injectable } from 'tsyringe';
 import { ProxyService } from './proxyService';
 import logger from '../utils/logger';
 import { PLAYWRIGHT_CRAWLER_CONFIG } from '../config/crawlee'; // 替换为 Playwright 的配置
-import { extractDataByUrl } from '../dataExtracts/index';
+import { extractDataByUrl } from '../extracts/index';
 
 @injectable()
 export class ScraperService {
@@ -46,7 +46,7 @@ export class ScraperService {
 
         try {
             logger.info(`Starting scrape for URL: ${url}`);
-            await this.crawler.addRequests([url]); // 将 URL 添加到爬取队列
+            await this.crawler.addRequests([{ requestsFromUrl: url }]); // 将 URL 添加到爬取队列
             await this.crawler.run(); // 启动爬取任务
             this.taskStatus.set(taskId, 'completed'); // 设置任务状态为已完成
         } catch (error: any) {
