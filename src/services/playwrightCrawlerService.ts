@@ -1,4 +1,5 @@
-import { PlaywrightCrawler, Dataset, chromium } from 'crawlee'; // 替换 Puppeteer 为 Playwright
+import { PlaywrightCrawler, Dataset } from 'crawlee'; // 替换 Puppeteer 为 Playwright
+import { chromium } from 'playwright';
 import { injectable } from 'tsyringe';
 import { ProxyService } from './proxyService';
 import logger from '../utils/logger';
@@ -7,7 +8,7 @@ import { extractDataByUrl } from '../extracts/index';
 
 
 @injectable()
-export class ScraperService {
+export class PlaywrightCrawlerService {
     private browser: any; // 用于存储浏览器实例
     // 创建一个示例列表，用于存储爬取的任务
     private crawlers = new Map<string, PlaywrightCrawler>(); // 使用 Map 存储任务 ID 和对应的爬虫实例

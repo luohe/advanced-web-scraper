@@ -1,11 +1,11 @@
 import { Request, Response } from 'express';
 import { inject, injectable } from 'tsyringe';
-import { ScraperService } from '../services/playwrightCrawlerService';
+import { PlaywrightCrawlerService } from '../services/playwrightCrawlerService';
 
 @injectable()
 export class ScraperController {
     constructor(
-        @inject(ScraperService) private scraperService: ScraperService
+        @inject(PlaywrightCrawlerService) private scraperService: PlaywrightCrawlerService
     ) {}
 
     // Start a new scraping task
