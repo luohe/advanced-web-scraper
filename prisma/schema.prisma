@@ -1,0 +1,45 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite" // 可以是 mysql、sqlite、sqlserver 等
+  url      = env("DATABASE_URL") // 从环境变量读取连接字符串
+}
+
+// 英文单词标签表
+model Tag {
+  id         Int      @id @default(autoincrement())
+  name       String   @unique
+  group      String?  @map("group_name")
+  desc       String?
+  createdAt  DateTime @default(now()) @map("created_at")
+  wordTags   WordTag[] // 关联中间表
+
+  @@map("tag")
+}
+
+// 英文单词表
+model EnglishWord {
+  id         Int      @id @default(autoincrement())
+  word       String  @unique
+  url        String?
+  data       String?
+  createdAt  DateTime @default(now()) @map("created_at")
+  wordTags   WordTag[]      // 关联中间表
+
+  @@map("english_word")
+}
+
+// 单词标签中间表
+model WordTag {
+  id         Int        @id @default(autoincrement())
+  wordId     Int        // 单词 ID
+  tagId      Int        // 标签 ID
+  createdAt  DateTime   @default(now()) // 可添加额外字段
+  word       EnglishWord @relation(fields: [wordId], references: [id])
+  name       Tag         @relation(fields: [tagId], references: [id])
+
+  @@unique([wordId, tagId]) // 组合唯一约束
+  @@map("word_tag")
+}

@@ -1,5 +1,21 @@
 import winston from 'winston';
 
+// 彩色格式
+const colorFormat = winston.format.combine(
+    winston.format.colorize({ all: true }),
+    winston.format.timestamp(),
+    winston.format.printf(({ timestamp, level, message }) => {
+        return `${timestamp} [${level}]: ${message}`;
+    })
+);
+
+const fileFormat = winston.format.combine(
+    winston.format.timestamp(),
+    winston.format.printf(({ timestamp, level, message }) => {
+        return `${timestamp} [${level}]: ${message}`;
+    })
+);
+
 // Create a logger instance with specific settings
 const logger = winston.createLogger({
     level: 'info', // Set the default logging level
@@ -10,9 +26,9 @@ const logger = winston.createLogger({
         })
     ),
     transports: [
-        new winston.transports.Console(), // Log to the console
-        new winston.transports.File({ filename: 'logs/error.log', level: 'error' }), // Log errors to a file
-        new winston.transports.File({ filename: 'logs/combined.log' }) // Log all messages to a combined file
+        new winston.transports.Console({ format: colorFormat }), // Log to the console
+        new winston.transports.File({ filename: 'logs/error.log', level: 'error', format: fileFormat }), // Log errors to a file
+        new winston.transports.File({ filename: 'logs/combined.log', format: fileFormat }) // Log all messages to a combined file
     ],
 });
 

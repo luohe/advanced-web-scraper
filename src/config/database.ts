@@ -9,7 +9,7 @@ interface DbConfig {
 
 // 数据库配置
 const dbConfig: DbConfig = {
-  filename: './src/database/sqlite.db',
+  filename: '/Users/xiazhiqiang14/crawler/sqlite/crawl.db',
   driver: sqlite3.Database,
 };
 

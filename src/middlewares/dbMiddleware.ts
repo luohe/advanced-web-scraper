@@ -1,9 +1,9 @@
 // src/middlewares/dbMiddleware.ts
 import { Request, Response, NextFunction } from 'express';
-import { getDb } from '../database/db';
+import prisma from '../lib/prisma';
 
 export function dbMiddleware(req: Request, res: Response, next: NextFunction) {
-  req.db = getDb();
+  req.prisma = prisma;
   next();
 }
 
@@ -12,6 +12,7 @@ declare global {
   namespace Express {
     interface Request {
       db: any; // 可以替换为更精确的类型
+      prisma: any; // 可以替换为更精确的类型
     }
   }
 }
