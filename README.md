@@ -80,3 +80,9 @@ Contributions are welcome! Please submit a pull request or open an issue for any
 
 ## License
 This project is licensed under the MIT License. See the LICENSE file for details.
+
+
+## 新增爬虫的过程
+- 新增爬虫第一步：新增爬虫的数据提取器名称
+- 新增爬虫第二步：定义爬虫数据存储
+- 新增爬虫第三步：自定义提取器

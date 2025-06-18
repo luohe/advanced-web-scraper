@@ -14,7 +14,13 @@ export class ScraperController {
         @inject(PlaywrightCrawlerService) private scraperService: PlaywrightCrawlerService
     ) {}
 
-    // Start a new scraping task
+    /**
+     * 
+     * @param req url 定义爬虫的起始位置
+     * @param req taskName 定义使用那个爬虫
+     * @param res 
+     * @returns 
+     */
     public async startScraping(req: Request, res: Response): Promise<void> {
         try {
             const { url, taskName } = req.query; // Get the URL from the request body
