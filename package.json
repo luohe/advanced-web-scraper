@@ -12,7 +12,7 @@
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
     "prisma:gen": "npx prisma generate",
-    "prisma:migrate": "npx prisma migrate dev", 
+    "prisma:migrate": "npx prisma migrate dev",
     "prisma:studio": "npx prisma studio",
     "prisma:seed": "npx prisma db seed",
     "prisma:reset": "npx prisma migrate reset --force",
@@ -50,7 +50,7 @@
     "@types/node": "^16.0.0",
     "jest": "^27.0.0",
     "ts-node": "^10.0.0",
-    "typescript": "^4.0.0"
+    "typescript": "5.8.3"
   },
   "jest": {
     "testEnvironment": "node"
