@@ -36,6 +36,7 @@ CREATE TABLE "WordSense" (
     "wordId" INTEGER NOT NULL,
     "partOfSpeech" TEXT NOT NULL,
     "definition" TEXT NOT NULL,
+    "frequency_percent" INTEGER,
     "exampleSentence" TEXT,
     "senseNumber" INTEGER NOT NULL,
     "isLiteral" BOOLEAN NOT NULL DEFAULT true,
@@ -45,16 +46,6 @@ CREATE TABLE "WordSense" (
     "created_at" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" DATETIME NOT NULL,
     CONSTRAINT "WordSense_wordId_fkey" FOREIGN KEY ("wordId") REFERENCES "Word" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
-);
-
--- CreateTable
-CREATE TABLE "WordForm" (
-    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    "wordId" INTEGER NOT NULL,
-    "formType" TEXT NOT NULL,
-    "formSpelling" TEXT NOT NULL,
-    "isIrregular" BOOLEAN NOT NULL DEFAULT false,
-    CONSTRAINT "WordForm_wordId_fkey" FOREIGN KEY ("wordId") REFERENCES "Word" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
 -- CreateTable
@@ -103,8 +94,12 @@ CREATE TABLE "Word" (
     "pronunciation" TEXT,
     "frequencyRank" INTEGER,
     "isCommon" BOOLEAN NOT NULL DEFAULT false,
+    "isInflected" BOOLEAN NOT NULL DEFAULT false,
+    "formType" TEXT,
+    "baseWordId" INTEGER,
     "created_at" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" DATETIME NOT NULL
+    "updated_at" DATETIME NOT NULL,
+    CONSTRAINT "Word_baseWordId_fkey" FOREIGN KEY ("baseWordId") REFERENCES "Word" ("id") ON DELETE SET NULL ON UPDATE CASCADE
 );
 
 -- CreateIndex
@@ -112,9 +107,6 @@ CREATE UNIQUE INDEX "Synonym_senseId_synonymSenseId_key" ON "Synonym"("senseId",
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Antonym_senseId_antonymSenseId_key" ON "Antonym"("senseId", "antonymSenseId");
-
--- CreateIndex
-CREATE UNIQUE INDEX "WordForm_wordId_formType_key" ON "WordForm"("wordId", "formType");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "word_tag_wordId_tagId_key" ON "word_tag"("wordId", "tagId");

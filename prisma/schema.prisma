@@ -27,14 +27,66 @@ enum PartOfSpeech {
 }
 
 /// 单词形态变化类型枚举
+/// 描述英语单词在语法和构词中的不同变形形式
 enum WordFormType {
-  PLURAL /// 复数形式
-  PAST_TENSE /// 过去式
-  PAST_PARTICIPLE /// 过去分词
-  PRESENT_PARTICIPLE /// 现在分词/动名词
-  COMPARATIVE /// 比较级
-  SUPERLATIVE /// 最高级
-  OTHER /// 其他变形
+    // === 名词相关变形 === //
+    /// 名词复数形式（通常加 -s/-es 部分不规则）
+    /// 示例：book → books child → children
+    PLURAL
+    
+    /// 名词所有格（加 's 或 '）
+    /// 示例：John → John's car students → students' books
+    POSSESSIVE
+
+    // === 动词相关变形 === //
+    /// 动词过去式（规则动词加 -ed 部分不规则）
+    /// 示例：walk → walked go → went
+    PAST_TENSE
+    
+    /// 过去分词（用于完成时/被动语态 规则动词加 -ed/-en）
+    /// 示例：eat → eaten write → written
+    PAST_PARTICIPLE
+    
+    /// 现在分词/动名词（-ing 形式）
+    /// 示例：run → running swim → swimming
+    PRESENT_PARTICIPLE
+    
+    /// 动词第三人称单数现在时（加 -s/-es）
+    /// 示例：write → writes go → goes
+    THIRD_PERSON_SINGULAR
+    
+    /// 动词变位（如情态动词的过去式）
+    /// 示例：can → could will → would
+    CONJUGATED
+
+    // === 形容词/副词相关变形 === //
+    /// 比较级（-er 或 more + 原级）
+    /// 示例：fast → faster beautiful → more beautiful
+    COMPARATIVE
+    
+    /// 最高级（-est 或 most + 原级）
+    /// 示例：fast → fastest careful → most careful
+    SUPERLATIVE
+
+    // === 其他变形 === //
+    /// 缩约形式（缩写+省音符号）
+    /// 示例：do not → don't I will → I'll
+    CONTRACTED
+    
+    /// 不规则变形（无法通过常规规则推导）
+    /// 示例：mouse → mice be → is/was/are/were
+    IRREGULAR
+    
+    /// 拼写因发音变化（如辅音双写 去 e 等）
+    /// 示例：run → running write → writing
+    PHONETIC_CHANGE
+    
+    /// 古旧或诗体变形（现代英语中罕见）
+    /// 示例：thou → thee hath → has
+    ARCHAIC
+    
+    /// 其他未分类的变形
+    OTHER
 }
 
 /// 词源考证模型
@@ -124,6 +176,9 @@ model WordSense {
   /// 词义定义（文本类型）
   definition String
 
+  /// 词义使用频率占比（0-100）
+  frequencyPercent Int?  @map("frequency_percent")
+
   /// 例句（可选）
   exampleSentence String?
 
@@ -158,30 +213,6 @@ model WordSense {
 
   /// 关联关系：作为反义词的反向关系
   antonymOf Antonym[] @relation("AntonymToAntonymSense")
-}
-
-/// 单词形态变化模型
-model WordForm {
-  /// 变化形式ID
-  id Int @id @default(autoincrement())
-
-  /// 关联的单词ID
-  wordId Int
-
-  /// 变化类型（使用枚举）
-  formType WordFormType
-
-  /// 变化后的拼写形式
-  formSpelling String
-
-  /// 是否是不规则变化
-  isIrregular Boolean @default(false)
-
-  /// 关联关系：所属单词
-  word Word @relation(fields: [wordId], references: [id])
-
-  /// 唯一约束：确保每个单词的每种变化类型只有一个记录
-  @@unique([wordId, formType])
 }
 
 model WordTag {
@@ -270,11 +301,21 @@ model Word {
   /// 发音音频文件URL（可选）
   pronunciation String?
 
-  /// 词频排名（可选）
+  /// 词频排名（可选）--- 五星词频
   frequencyRank Int?
 
   /// 是否属于常用词（默认否）
   isCommon Boolean @default(false)
+
+  /// 新增字段：标记是否为变形词
+  isInflected    Boolean      @default(false)
+  formType       WordFormType?
+  
+  /// 新增字段：关联原形词
+  baseWordId     Int?
+  baseWord       Word?        @relation("BaseToDerived", fields: [baseWordId], references: [id])
+  // 新增关系：所有变形词
+  derivedForms   Word[]       @relation("BaseToDerived")
 
   /// 记录创建时间（自动设置）
   createdAt DateTime @default(now()) @map("created_at")
@@ -283,9 +324,6 @@ model Word {
 
   /// 关联关系：一个单词有多个词义解释
   senses WordSense[]
-
-  /// 关联关系：一个单词有多个形态变化
-  forms WordForm[]
 
   /// 关联关系：一个单词可能有多个词源考证
   etymologies Etymology[]
