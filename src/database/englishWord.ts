@@ -11,6 +11,7 @@ export const insert = async (info: EnglishWord) => {
     create: {
       word: info.word,
       url: info.url,
+      wordTags: ['sd'],
       data: JSON.stringify(other)
     },
     update: {}
