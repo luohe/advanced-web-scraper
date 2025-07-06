@@ -1,21 +1,22 @@
 import { ScraperNames } from '../config/scraper';
 import prisma from '../lib/prisma'
-import { EnglishWord } from '@prisma/client'
+import { Word } from '@prisma/client'
 
 // 插入数据
-export const insert = async (info: EnglishWord) => {
-  const { word, url, ...other } = info;
+export const insert = async (info: Word) => {
+  // TODO: 需要重写插入英文单词的能力
+  // const { word, url, ...other } = info;
 
-  await prisma.englishWord.upsert({
-    where: { word: info.word },
-    create: {
-      word: info.word,
-      url: info.url,
-      wordTags: ['sd'],
-      data: JSON.stringify(other)
-    },
-    update: {}
-  });
+  // await prisma.word.upsert({
+  //   where: { word: info.word },
+  //   create: {
+  //     word: info.word,
+  //     url: info.url,
+  //     wordTags: ['sd'],
+  //     data: JSON.stringify(other)
+  //   },
+  //   update: {}
+  // });
 }
 
 export default {
