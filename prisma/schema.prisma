@@ -31,59 +31,59 @@ enum PartOfSpeech {
 enum WordFormType {
   /// 名词复数形式（通常加 -s/-es 部分不规则）
   /// 示例：book → books child → children
-  PLURAL               @map("pl") // 复数
+  PLURAL               @map("pl")                  // 复数
   
   /// 名词所有格（加 's 或 '）
   /// 示例：John → John's car students → students' books
-  POSSESSIVE           @map("poss") // 所有格
+  POSSESSIVE           @map("poss")                // 所有格
 
   /// 动词过去式（规则动词加 -ed 部分不规则）
   /// 示例：walk → walked go → went
-  PAST_TENSE           @map("past") // 过去式
+  PAST_TENSE           @map("past")                // 过去式
   
   /// 过去分词（用于完成时/被动语态 规则动词加 -ed/-en）
   /// 示例：eat → eaten write → written
-  PAST_PARTICIPLE      @map("pp") // 过去分词
+  PAST_PARTICIPLE      @map("pp")                  // 过去分词
   
   /// 现在分词/动名词（-ing 形式）
   /// 示例：run → running swim → swimming
-  PRESENT_PARTICIPLE   @map("pres_part") // 现在分词
+  PRESENT_PARTICIPLE   @map("pres_part")           // 现在分词
   
   /// 动词第三人称单数现在时（加 -s/-es）
   /// 示例：write → writes go → goes
-  THIRD_PERSON_SINGULAR @map("3sg") // 第三人称单数
+  THIRD_PERSON_SINGULAR @map("3sg")                // 第三人称单数
   
   /// 动词变位（如情态动词的过去式）
   /// 示例：can → could will → would
-  CONJUGATED           @map("conj") // 变位形式
+  CONJUGATED           @map("conj")                // 变位形式
 
   // === 形容词/副词相关变形 === //
   /// 比较级（-er 或 more + 原级）
   /// 示例：fast → faster beautiful → more beautiful
-  COMPARATIVE          @map("comp") // 比较级
+  COMPARATIVE          @map("comp")                 // 比较级
   
   /// 最高级（-est 或 most + 原级）
   /// 示例：fast → fastest careful → most careful
-  SUPERLATIVE          @map("superl") // 最高级
+  SUPERLATIVE          @map("superl")               // 最高级
 
   /// 缩约形式（缩写+省音符号）
   /// 示例：do not → don't I will → I'll
-  CONTRACTED           @map("contr") // 缩约形式
+  CONTRACTED           @map("contr")               // 缩约形式
   
   /// 不规则变形（无法通过常规规则推导）
   /// 示例：mouse → mice be → is/was/are/were
-  IRREGULAR            @map("irreg") // 不规则形式
+  IRREGULAR            @map("irreg")               // 不规则形式
   
   /// 拼写因发音变化（如辅音双写 去 e 等）
   /// 示例：run → running write → writing
-  PHONETIC_CHANGE      @map("phon")
+  PHONETIC_CHANGE      @map("phon")                // 语音拼写变化
   
   /// 古旧或诗体变形（现代英语中罕见）
   /// 示例：thou → thee hath → has
-  ARCHAIC              @map("arch")
+  ARCHAIC              @map("arch")                // 古旧形式
   
   /// 其他未分类的变形
-  OTHER                @map("other")
+  OTHER                @map("other")               // 其他
 }
 
 /// 词源考证模型
