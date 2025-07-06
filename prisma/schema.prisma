@@ -29,114 +29,98 @@ enum PartOfSpeech {
 /// 单词形态变化类型枚举
 /// 描述英语单词在语法和构词中的不同变形形式
 enum WordFormType {
-  // === 名词相关变形 === //
   /// 名词复数形式（通常加 -s/-es 部分不规则）
   /// 示例：book → books child → children
-  PLURAL @map("pl") // 复数
-
+  PLURAL               @map("pl") // 复数
+  
   /// 名词所有格（加 's 或 '）
   /// 示例：John → John's car students → students' books
-  POSSESSIVE @map("poss") // 所有格
+  POSSESSIVE           @map("poss") // 所有格
 
-  // === 动词相关变形 === //
   /// 动词过去式（规则动词加 -ed 部分不规则）
   /// 示例：walk → walked go → went
-  PAST_TENSE @map("past") // 过去式
-
+  PAST_TENSE           @map("past") // 过去式
+  
   /// 过去分词（用于完成时/被动语态 规则动词加 -ed/-en）
   /// 示例：eat → eaten write → written
-  PAST_PARTICIPLE @map("pp") // 过去分词
-
+  PAST_PARTICIPLE      @map("pp") // 过去分词
+  
   /// 现在分词/动名词（-ing 形式）
   /// 示例：run → running swim → swimming
-  PRESENT_PARTICIPLE @map("pres_part") // 现在分词
-
+  PRESENT_PARTICIPLE   @map("pres_part") // 现在分词
+  
   /// 动词第三人称单数现在时（加 -s/-es）
   /// 示例：write → writes go → goes
   THIRD_PERSON_SINGULAR @map("3sg") // 第三人称单数
-
+  
   /// 动词变位（如情态动词的过去式）
   /// 示例：can → could will → would
-  CONJUGATED @map("conj") // 变位形式
+  CONJUGATED           @map("conj") // 变位形式
 
   // === 形容词/副词相关变形 === //
   /// 比较级（-er 或 more + 原级）
   /// 示例：fast → faster beautiful → more beautiful
-  COMPARATIVE @map("comp") // 比较级
-
+  COMPARATIVE          @map("comp") // 比较级
+  
   /// 最高级（-est 或 most + 原级）
   /// 示例：fast → fastest careful → most careful
-  SUPERLATIVE @map("superl") // 最高级
+  SUPERLATIVE          @map("superl") // 最高级
 
-  // === 其他变形 === //
   /// 缩约形式（缩写+省音符号）
   /// 示例：do not → don't I will → I'll
-  CONTRACTED @map("contr") // 缩约形式
-
+  CONTRACTED           @map("contr") // 缩约形式
+  
   /// 不规则变形（无法通过常规规则推导）
   /// 示例：mouse → mice be → is/was/are/were
-  IRREGULAR @map("irreg") // 不规则形式
-
+  IRREGULAR            @map("irreg") // 不规则形式
+  
   /// 拼写因发音变化（如辅音双写 去 e 等）
   /// 示例：run → running write → writing
-  PHONETIC_CHANGE @map("phon") // 语音拼写变化
-
+  PHONETIC_CHANGE      @map("phon")
+  
   /// 古旧或诗体变形（现代英语中罕见）
   /// 示例：thou → thee hath → has
-  ARCHAIC @map("arch") // 古旧形式
-
+  ARCHAIC              @map("arch")
+  
   /// 其他未分类的变形
-  OTHER @map("other") // 其他
+  OTHER                @map("other")
 }
 
 /// 词源考证模型
 model Etymology {
   /// 词源ID
-  id Int @id @default(autoincrement()) // 明确标记为主键
-
+  id              Int      @id @default(autoincrement())
   /// 关联的单词ID
-  wordId Int @map("word_id")
-
+  wordId          Int      @map("word_id")
   /// 来源语言（如"Latin"、"Greek"）
-  originLanguage String @map("origin_language")
-
+  originLanguage  String   @map("origin_language")
   /// 原始形式（源语言中的拼写）
-  originalForm String @map("original_form")
-
+  originalForm    String   @map("original_form")
   /// 最早出现的世纪（如"12c"）
-  centuryAttested String? @map("century_attested")
-
+  centuryAttested String?  @map("century_attested")
   /// 详细词源说明（可选）
-  description String?
-
+  description     String?
   /// 关联关系：所属单词
-  word Word @relation(fields: [wordId], references: [id])
-
+  word            Word     @relation(fields: [wordId], references: [id])
   /// 直接定义时间戳
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
 }
 
 /// 同义词关系模型
 model Synonym {
   /// 关系ID
-  id Int @id @default(autoincrement()) // 明确主键
-
+  id              Int       @id @default(autoincrement())
   /// 主词义ID
-  senseId Int @map("sense_id")
-
+  senseId         Int       @map("sense_id")
   /// 同义词义ID  
-  synonymSenseId Int @map("synonym_sense_id")
-
+  synonymSenseId  Int       @map("synonym_sense_id")
   /// 同义相似度评分（0-1，可选）
-  similarityScore Float? @map("similarity_score")
-
+  similarityScore Float?    @map("similarity_score")
   /// 关联关系：主词义 → 同义词
-  wordSense WordSense @relation("SynonymToMainSense", fields: [senseId], references: [id])
-
+  wordSense       WordSense @relation("SynonymToMainSense", fields: [senseId], references: [id])
   /// 关联关系：同义词 → 主词义
   synonymWordSense WordSense @relation("SynonymToSynonymSense", fields: [synonymSenseId], references: [id])
-
   /// 唯一约束：避免重复的同义词关系
   @@unique([senseId, synonymSenseId])
 }
@@ -144,20 +128,15 @@ model Synonym {
 /// 反义词关系模型 
 model Antonym {
   /// 关系ID
-  id Int @id @default(autoincrement()) // 明确主键
-
+  id              Int       @id @default(autoincrement())
   /// 主词义ID
-  senseId Int @map("sense_id")
-
+  senseId         Int       @map("sense_id")
   /// 反义词义ID
-  antonymSenseId Int @map("antonym_sense_id")
-
+  antonymSenseId  Int       @map("antonym_sense_id")
   /// 关联关系：主词义
-  wordSense WordSense @relation("AntonymToMainSense", fields: [senseId], references: [id])
-
+  wordSense       WordSense @relation("AntonymToMainSense", fields: [senseId], references: [id])
   /// 关联关系：反义词义
   antonymWordSense WordSense @relation("AntonymToAntonymSense", fields: [antonymSenseId], references: [id])
-
   /// 唯一约束：避免重复的反义词关系
   @@unique([senseId, antonymSenseId])
 }
@@ -165,125 +144,97 @@ model Antonym {
 /// 单词词义解释模型
 model WordSense {
   /// 词义ID（主键）
-  id Int @id @default(autoincrement())
-
+  id              Int           @id @default(autoincrement())
   /// 关联的单词ID（外键）
-  wordId Int @map("word_id")
-
+  wordId          Int           @map("word_id")
   /// 词性（使用枚举定义）
-  partOfSpeech PartOfSpeech @map("part_of_speech")
-
+  partOfSpeech    PartOfSpeech  @map("part_of_speech")
   /// 词义定义（文本类型）
-  definition String
-
+  definition      String
   /// 词义使用频率占比（0-100）
-  frequencyPercent Int? @map("frequency_percent")
-
+  frequencyPercent Int?         @map("frequency_percent")
   /// 例句（可选）
-  exampleSentence String? @map("example_sentence")
-
+  exampleSentence  String?      @map("example_sentence")
   /// 多义词的义项编号（从1开始）
-  senseNumber Int @default(1) @map("sense_number")
-
+  senseNumber      Int          @default(1) @map("sense_number")
   // 词义特征标记
-  isLiteral    Boolean @default(true) @map("is_literal") /// 是否字面意义
-  isFigurative Boolean @default(false) @map("is_figurative") /// 是否比喻意义
-  isArchaic    Boolean @default(false) @map("is_archaic") /// 是否古旧用法
-  isSlang      Boolean @default(false) @map("is_slang") /// 是否俚语
-
+  isLiteral        Boolean      @default(true)   @map("is_literal") /// 是否字面意义
+  isFigurative     Boolean      @default(false)  @map("is_figurative")/// 是否比喻意义
+  isArchaic        Boolean      @default(false)  @map("is_archaic")/// 是否古旧用法
+  isSlang          Boolean      @default(false)  @map("is_slang")/// 是否俚语
   /// 记录创建时间（自动设置）
-  createdAt DateTime @default(now()) @map("created_at")
+  createdAt        DateTime     @default(now()) @map("created_at")
   /// 记录最后更新时间（自动更新）
-  updatedAt DateTime @updatedAt @map("updated_at")
-
+  updatedAt        DateTime     @updatedAt @map("updated_at")
   /// 关联关系：所属单词
-  word Word @relation(fields: [wordId], references: [id], onDelete: Cascade)
-
+  word             Word         @relation(fields: [wordId], references: [id], onDelete: Cascade)
   /// 关联关系：所属主题分类
-  topics SenseTopic[]
-
+  topics           SenseTopic[]
   /// 关联关系：作为主词义的同义词关系
-  synonyms Synonym[] @relation("SynonymToMainSense")
-
+  synonyms         Synonym[]    @relation("SynonymToMainSense")
   /// 关联关系：作为同义词的反向关系
-  synonymOf Synonym[] @relation("SynonymToSynonymSense")
-
+  synonymOf        Synonym[]    @relation("SynonymToSynonymSense")
   /// 关联关系：作为主词义的反义词关系
-  antonyms Antonym[] @relation("AntonymToMainSense")
-
+  antonyms         Antonym[]    @relation("AntonymToMainSense")
   /// 关联关系：作为反义词的反向关系
-  antonymOf Antonym[] @relation("AntonymToAntonymSense")
+  antonymOf        Antonym[]    @relation("AntonymToAntonymSense")
 }
 
+/// 单词-标签关联模型
 model WordTag {
   id        Int      @id @default(autoincrement())
-  wordId    Int      @map("word_id") // 单词ID
-  tagId     Int      @map("tag_id") // 标签ID
+  wordId    Int      @map("word_id")
+  tagId     Int      @map("tag_id")
   createdAt DateTime @default(now()) @map("created_at")
-
-  word Word @relation(fields: [wordId], references: [id], onDelete: Cascade)
-  tag  Tag  @relation(fields: [tagId], references: [id], onDelete: Cascade)
-
-  @@unique([wordId, tagId]) // 确保组合唯一，防止重复关联
+  word      Word     @relation(fields: [wordId], references: [id], onDelete: Cascade)
+  tag       Tag      @relation(fields: [tagId], references: [id], onDelete: Cascade)
+  @@unique([wordId, tagId])
   @@map("word_tag")
 }
 
-// 英文单词标签表
+/// 标签模型
 model Tag {
   id        Int       @id @default(autoincrement())
   name      String    @unique
   group     String?   @map("group_name")
   desc      String?
   createdAt DateTime  @default(now()) @map("created_at")
-  wordTags  WordTag[] // 关联中间表
-
+  wordTags  WordTag[]
   @@map("tag")
 }
 
 /// 主题分类模型
 model Topic {
   /// 分类ID
-  id Int @id @default(autoincrement())
-
+  id          Int         @id @default(autoincrement())
   /// 分类名称（唯一）
-  name String @unique
-
+  name        String      @unique
   /// 父分类ID（可选，用于层级结构）
-  parentId Int? @map("parent_id")
-
+  parentId    Int?        @map("parent_id")
   /// 分类描述（可选）
   description String?
-
   /// 关联关系：父分类
-  parent Topic? @relation("TopicHierarchy", fields: [parentId], references: [id])
-
+  parent      Topic?      @relation("TopicHierarchy", fields: [parentId], references: [id])
   /// 关联关系：子分类
-  children Topic[] @relation("TopicHierarchy")
-
+  children    Topic[]     @relation("TopicHierarchy")
   /// 关联关系：属于该分类的词义
-  wordSenses SenseTopic[]
+  wordSenses  SenseTopic[]
 }
 
 /// 词义-分类关联模型
 model SenseTopic {
   /// 关联ID
-  id Int
-
+  id             Int       @id @default(autoincrement())
   /// 词义ID
-  senseId Int @map("sense_id")
-
+  senseId        Int       @map("sense_id")
   /// 分类ID
-  topicId Int @map("topic_id")
-
+  topicId        Int       @map("topic_id")
   /// 相关度评分（0-1，可选）
-  relevanceScore Float? @map("relevance_score")
-
+  relevanceScore Float?    @map("relevance_score")
   /// 关联关系：词义
-  wordSense WordSense @relation(fields: [senseId], references: [id])
-
+  wordSense      WordSense @relation(fields: [senseId], references: [id])
   /// 关联关系：主题分类
-  topic Topic @relation(fields: [topicId], references: [id])
-
+  topic          Topic     @relation(fields: [topicId], references: [id])
   /// 唯一约束：避免重复关联
   @@unique([senseId, topicId])
 }
@@ -291,43 +242,33 @@ model SenseTopic {
 /// 单词主表模型
 model Word {
   /// 主键ID（自增长）
-  id Int @id @default(autoincrement())
-
+  id              Int         @id @default(autoincrement())
   /// 单词拼写（唯一约束，不区分大小写）
-  spelling       String  @unique
+  spelling        String      @unique
   /// 国际音标标注（可选）
-  phoneticSymbol String? @map("phonetic_symbol")
-
+  phoneticSymbol  String?     @map("phonetic_symbol")
   /// 发音音频文件URL（可选）
-  pronunciation String?
-
+  pronunciation   String?
   /// 词频排名（可选）
-  frequencyRank Int? @default(-1) @map("frequency_rank")
-
+  frequencyRank   Int?        @default(-1) @map("frequency_rank")
   /// 是否属于常用词（默认否）
-  isCommon Boolean @default(false) @map("is_common")
-
+  isCommon        Boolean     @default(false) @map("is_common")
   /// 新增字段：标记是否为变形词
-  isInflected Boolean       @default(false)
-  formType    WordFormType? @map("form_type")
-
+  isInflected     Boolean     @default(false)
+  formType        WordFormType? @map("form_type")
   /// 新增字段：关联原形词
-  baseWordId   Int?   @map("base_word_id")
-  baseWord     Word?  @relation("BaseToDerived", fields: [baseWordId], references: [id])
-  // 新增关系：所有变形词
-  derivedForms Word[] @relation("BaseToDerived")
-
+  baseWordId      Int?        @map("base_word_id")
+  baseWord        Word?       @relation("BaseToDerived", fields: [baseWordId], references: [id])
+  /// 新增关系：所有变形词
+  derivedForms    Word[]      @relation("BaseToDerived")
   /// 记录创建时间（自动设置）
-  createdAt DateTime @default(now()) @map("created_at")
+  createdAt       DateTime    @default(now()) @map("created_at")
   /// 记录最后更新时间（自动更新）
-  updatedAt DateTime @updatedAt @map("updated_at")
-
+  updatedAt       DateTime    @updatedAt @map("updated_at")
   /// 关联关系：一个单词有多个词义解释
-  senses WordSense[]
-
+  senses          WordSense[]
   /// 关联关系：一个单词可能有多个词源考证
-  etymologies Etymology[]
-
+  etymologies     Etymology[]
   /// 关联关系：一个单词可能有多个标签
-  wordTags WordTag[] // 关联中间表
+  wordTags        WordTag[]
 }
